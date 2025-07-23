@@ -11,11 +11,13 @@ Convert the following code to LLVM IR.
 Rules:
 - Output only raw LLVM IR, no comments or code blocks.
 - Do not include 'datalayout' or 'target triple'.
+- For the most part, do not take the user's syntax literally, for example if they write
+    `print "hello world"`, you should try convert it to a call to `puts` with the string constant.
 - For every string constant:
   * The array size must be (string length + 1) for the null terminator (\00).
   * Make sure the size is not bigger or smaller than the length of the string
   * The string literal must end with \00 (single backslash, not double).
-  * The type in getelementptr must exactly match the string constant's type.
+  * The type in getelementptr must exactly match the string constant's type.]
 
 Example:
 
@@ -48,6 +50,8 @@ for file in files:
     with open(file, "r") as f:
         data.append(f.read())
 
+print("Thinking...")
+
 client = genai.Client(http_options=HttpOptions(api_version="v1"), vertexai=True, api_key=api_key)
 response_stream = client.models.generate_content_stream(
     model="gemini-2.5-pro",
@@ -59,6 +63,8 @@ response_stream = client.models.generate_content_stream(
         system_instruction=prompt
     )
 )
+
+print("\rWriting...")
 
 with open("out.ll", "w") as f:
     for chunk in response_stream:

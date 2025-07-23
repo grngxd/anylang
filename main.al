@@ -1,7 +1,6 @@
-say "hello, universe!"
+when boot:
+    display "booting up..."
+    display "ready!"
+    halt
 
-repeat 3 times:
-    shout "echo!" # "ECHO!"
-done
-
-exit
+extern display(text)
