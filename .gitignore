@@ -1,5 +1,6 @@
 .env
 out.ll
 out.o
+out.s
 out
 out.exe

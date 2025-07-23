@@ -42,7 +42,7 @@ if not api_key:
 files = []
 for root, dirs, filenames in os.walk(os.getcwd()):
     for filename in filenames:
-        if filename.endswith(".al"):
+        if filename.endswith(".any"):
             files.append(os.path.join(root, filename))
 
 data = []
@@ -50,7 +50,7 @@ for file in files:
     with open(file, "r") as f:
         data.append(f.read())
 
-print("Thinking...")
+print("Thinking...", end="", flush=True)
 
 client = genai.Client(http_options=HttpOptions(api_version="v1"), vertexai=True, api_key=api_key)
 response_stream = client.models.generate_content_stream(
@@ -64,20 +64,24 @@ response_stream = client.models.generate_content_stream(
     )
 )
 
-print("\rWriting...")
+print("\rWriting...      ", end="", flush=True)
 
 with open("out.ll", "w") as f:
     for chunk in response_stream:
         f.write(str(chunk.text))
 
-os.system("llc out.ll -filetype=obj -o out.o")
+print("\r" + " " * 40, end="\r", flush=True)
+
+os.system("llc out.ll -o out.s")
 if platform.system() == "Windows":
-    os.system("clang out.o -o out.exe")
+    os.system("clang out.s -o out.exe -O3")
 else:
-    os.system("clang out.o -o out")
+    os.system("clang out.s -o out -O3")
 
 
 if platform.system() == "Windows":
-    os.system(".\\out.exe")
+    exit_code = os.system(".\\out.exe")
 else:
-    os.system("./out")
+    exit_code = os.system("./out")
+
+print(f"anylang exited with code {exit_code}")

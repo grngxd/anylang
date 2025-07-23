@@ -1,0 +1,4 @@
+on start:
+    log("hello")
+
+finish(1)
